@@ -59,7 +59,7 @@ public sealed class WebViewRenderNode : INode, IDisposable
         if (_pipeline is null)
             CreatePipeline(gfx, swapchainTarget.RenderPass);
 
-        // ── Quiescent resize guard ──────────────────────────────────
+        // -- Quiescent resize guard --
         // On the frame a native resize was committed the surface is freshly
         // allocated and empty - skip the upload, just draw the old texture.
         var currentGen = webview.ResizeGeneration;
@@ -78,7 +78,7 @@ public sealed class WebViewRenderNode : INode, IDisposable
                 activePass = UploadPixels(webview, activePass, gfx, renderContext, swapchainTarget, renderWorld);
         }
 
-        // ── Draw ────────────────────────────────────────────────────
+        // -- Draw --
         if (_webviewImage is null || _pipeline is null || _descriptorSet is null)
             return;
 

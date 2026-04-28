@@ -28,7 +28,7 @@ public struct WebViewDebugHud
 
         ImGui.Begin("WebView Debug", ImGuiWindowFlags.NoSavedSettings);
 
-        // ── View info ────────────────────────────────────────────────
+        // -- View info --
         ImGui.Text($"View:       {w.Width}x{w.Height}");
         ImGui.Text($"Surface:    {(w.HasSurface ? "YES" : "NO")}");
         ImGui.Text($"RowBytes:   {w.SurfaceRowBytes}  (expected {w.Width * 4})");
@@ -36,7 +36,7 @@ public struct WebViewDebugHud
 
         ImGui.Separator();
 
-        // ── Page load state (from native callbacks) ──────────────────
+        // -- Page load state (from native callbacks) --
         ImGui.TextColored(w.DiagDOMReady ? Green : Yellow,
             $"DOM Ready:  {w.DiagDOMReady}");
         ImGui.TextColored(w.DiagPageFinished ? Green : Yellow,
@@ -48,20 +48,20 @@ public struct WebViewDebugHud
 
         ImGui.Separator();
 
-        // ── Frame counters ───────────────────────────────────────────
+        // -- Frame counters --
         ImGui.Text($"Updates:    {w.DiagUpdateCount}");
         ImGui.Text($"Paints:     {w.DiagPaintCount}");
         ImGui.Text($"Uploads:    {w.DiagUploadCount}");
 
         ImGui.Separator();
 
-        // ── Resource files on disk ───────────────────────────────────
+        // -- Resource files on disk --
         ImGui.Text($"ICU data:   {(w.DiagIcuExists ? "OK" : "MISSING")}");
         ImGui.Text($"CA certs:   {(w.DiagCaCertExists ? "OK" : "MISSING")}");
 
         ImGui.Separator();
 
-        // ── Warnings ─────────────────────────────────────────────────
+        // -- Warnings --
         if (!w.DiagDOMReady && w.DiagUpdateCount > 60)
             ImGui.TextColored(Red,
                 "CRITICAL: DOM never became ready - page did not load!");
@@ -80,7 +80,7 @@ public struct WebViewDebugHud
 
         ImGui.Separator();
 
-        // ── Log / Dump ───────────────────────────────────────────────
+        // -- Log / Dump --
         if (ImGui.Button("Log Snapshot"))
             LogSnapshot(w);
 

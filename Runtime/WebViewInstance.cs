@@ -54,7 +54,7 @@ public sealed class WebViewInstance : IDisposable
     /// <summary>Row stride in bytes of the bitmap surface (may be &gt; Width*4 due to alignment).</summary>
     public uint SurfaceRowBytes => _view?.Surface?.RowBytes ?? (Width * 4);
 
-    // ── Diagnostics (read by ImGui debug window) ─────────────────────
+    // -- Diagnostics (read by ImGui debug window) --
 
     /// <summary>Whether the Ultralight view has an active bitmap surface.</summary>
     public bool HasSurface => _view?.Surface is not null;
@@ -80,7 +80,7 @@ public sealed class WebViewInstance : IDisposable
     /// <summary>Whether the CA certificate file exists on disk.</summary>
     public bool DiagCaCertExists => File.Exists(Path.Combine(AppContext.BaseDirectory, "runtimes", "cacert.pem"));
 
-    // ── Page load state (set by native callbacks) ────────────────────
+    // -- Page load state (set by native callbacks) --
 
     /// <summary>Whether the DOM-ready callback has fired for the current page.</summary>
     public bool DiagDOMReady { get; private set; }
@@ -96,7 +96,7 @@ public sealed class WebViewInstance : IDisposable
 
     private int _titleQueryCountdown;
 
-    // ── Deferred resize ─────────────────────────────────────────────
+    // -- Deferred resize --
     private uint _pendingResizeWidth;
     private uint _pendingResizeHeight;
     private bool _hasPendingResize;
@@ -121,10 +121,10 @@ public sealed class WebViewInstance : IDisposable
         Width = width;
         Height = height;
 
-        // ── Extract embedded resources to disk ────────────────────────
+        // -- Extract embedded resources to disk --
         ExtractEmbeddedResources();
 
-        // ── Platform configuration via AppCore ────────────────────────
+        // -- Platform configuration via AppCore --
         AppCoreMethods.SetDefaultLogger(Path.Combine(AppContext.BaseDirectory, "ultralight.log"));
         AppCoreMethods.SetPlatformFontLoader();
         AppCoreMethods.SetPlatformFileSystem(AppContext.BaseDirectory);
@@ -133,7 +133,7 @@ public sealed class WebViewInstance : IDisposable
 
         Logger.Info("AppCore platform font loader, file system, and logger enabled.");
 
-        // ── Renderer ──────────────────────────────────────────────────
+        // -- Renderer --
         _renderer = ULPlatform.CreateRenderer();
 
         // CreateRenderer() may reset ErrorWrongThread to true internally.
@@ -142,7 +142,7 @@ public sealed class WebViewInstance : IDisposable
         ULPlatform.ErrorWrongThread = false;
         Logger.Info("Ultralight renderer created.");
 
-        // ── View configuration ────────────────────────────────────────
+        // -- View configuration --
         var viewConfig = new ViewConfig
         {
             IsAccelerated = false,   // CPU bitmap surface mode
@@ -161,7 +161,7 @@ public sealed class WebViewInstance : IDisposable
         _view = _renderer.CreateView(width, height, viewConfig, _renderer.DefaultSession);
         _view.Focus();
 
-        // ── Register native callbacks for load tracking ──────────────
+        // -- Register native callbacks for load tracking --
         _view.OnDomReady += OnDOMReadyHandler;
         _view.OnFinishLoading += OnFinishLoadingHandler;
         _view.OnFailLoading += OnFailLoadingHandler;
@@ -170,7 +170,7 @@ public sealed class WebViewInstance : IDisposable
         Logger.Info($"Ultralight view created ({width}x{height}, CPU bitmap, transparent).");
     }
 
-    // ── Native callback handlers ─────────────────────────────────────
+    // -- Native callback handlers --
 
     private void OnDOMReadyHandler(ulong frameId, bool isMainFrame, string url)
     {
@@ -258,7 +258,7 @@ public sealed class WebViewInstance : IDisposable
     {
         if (_renderer is null) return;
 
-        // ── Quiescent resize ─────────────────────────────────────────
+        // -- Quiescent resize --
         if (_hasPendingResize && ApplyPendingResize())
         {
             DiagUpdateCount++;

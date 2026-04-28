@@ -33,12 +33,12 @@ public sealed class WebViewPlugin : IPlugin
         var webview = new WebViewInstance();
         app.World.InsertResource(webview);
 
-        // ── Debounce state for WebView native resize ──
+        // -- Debounce state for WebView native resize --
         bool pendingWebViewResize = false;
         uint pendingW = 0, pendingH = 0;
         long lastWebViewResizeTick = 0;
 
-        // ── Startup: initialize Ultralight and load content ───────────
+        // -- Startup: initialize Ultralight and load content --
         app.AddSystem(Stage.Startup, new SystemDescriptor(world =>
             {
                 var cfg = world.Resource<Config>();
@@ -96,10 +96,10 @@ public sealed class WebViewPlugin : IPlugin
             .Write<AppWindow>()
             .Write<Renderer>());
 
-        // ── F1 toggle condition (uses SystemToggleRegistry, same as [ToggleKey]) ──
+        // -- F1 toggle condition (uses SystemToggleRegistry, same as [ToggleKey]) --
         var webViewToggle = BehaviorConditions.KeyToggle("WebViewPlugin.Render", Key.F1);
 
-        // ── Per-frame: resolve debounced resize, then update Ultralight ──
+        // -- Per-frame: resolve debounced resize, then update Ultralight --
         app.AddSystem(Stage.Update, new SystemDescriptor((world) =>
             {
                 var b = world.TryResource<WebViewInstance>();
@@ -122,7 +122,7 @@ public sealed class WebViewPlugin : IPlugin
             .Read<AppWindow>()
             .Read<Input>());
 
-        // ── Cleanup: dispose Ultralight ──────────────────────────────
+        // -- Cleanup: dispose Ultralight --
         app.AddSystem(Stage.Cleanup, new SystemDescriptor(static (World world) =>
             {
                 if (world.TryGetResource<WebViewInstance>(out var b))

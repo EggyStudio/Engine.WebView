@@ -57,7 +57,7 @@ internal static class AppCoreMethods
 
         NativeLibraryLoader.EnsureDirectory(nativeDir);
 
-        // ── Configure loader ─────────────────────────────────────────
+        // -- Configure loader --
         var loader = new NativeLibraryLoader()
             .AddSearchPath(nativeDir)
             .AddSearchPath(baseDir)
@@ -69,7 +69,7 @@ internal static class AppCoreMethods
             .OnLog(msg  => Logger.Debug(msg))
             .OnWarn(msg => Logger.Warn(msg));
 
-        // ── Linux: libbz2.so.1.0 compatibility ──────────────────────
+        // -- Linux: libbz2.so.1.0 compatibility --
         // The Ultralight SDK's libWebCore.so was linked against libbz2.so.1.0, but
         // modern distros only ship libbz2.so.1 → libbz2.so.1.0.x.
         // 1. Create a symlink so the file is discoverable.
@@ -96,14 +96,14 @@ internal static class AppCoreMethods
                 [bz2Link, .. bz2Candidates]);
         }
 
-        // ── Pre-load Ultralight libraries (dependency order) ─────────
+        // -- Pre-load Ultralight libraries (dependency order) --
         loader.PreloadAll(
             NativeLibraryLoader.ToPlatformFileName("UltralightCore"),
             NativeLibraryLoader.ToPlatformFileName("WebCore"),
             NativeLibraryLoader.ToPlatformFileName("Ultralight"),
             NativeLibraryLoader.ToPlatformFileName("AppCore"));
 
-        // ── Register DllImport resolvers ─────────────────────────────
+        // -- Register DllImport resolvers --
         loader.RegisterDllImportResolver(typeof(ForkAppCore).Assembly);
         loader.RegisterGlobalFallback();
 
