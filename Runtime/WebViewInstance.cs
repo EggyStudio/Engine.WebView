@@ -125,7 +125,7 @@ public sealed class WebViewInstance : IDisposable
         ExtractEmbeddedResources();
 
         // -- Platform configuration via AppCore --
-        AppCoreMethods.SetDefaultLogger(Path.Combine(AppContext.BaseDirectory, "ultralight.log"));
+        AppCoreMethods.SetDefaultLogger(LogConfig.GetLogFilePath("ultralight.log"));
         AppCoreMethods.SetPlatformFontLoader();
         AppCoreMethods.SetPlatformFileSystem(AppContext.BaseDirectory);
 
