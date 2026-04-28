@@ -136,9 +136,8 @@ public sealed class WebViewInstance : IDisposable
         // -- Renderer --
         _renderer = ULPlatform.CreateRenderer();
 
-        // CreateRenderer() may reset ErrorWrongThread to true internally.
-        // The engine's Update stage runs systems in parallel (thread pool),
-        // so we must disable the managed thread-affinity check afterwards.
+        // CreateRenderer() may set ErrorWrongThread=true; engine systems run on a thread pool,
+        // so disable the managed thread-affinity check.
         ULPlatform.ErrorWrongThread = false;
         Logger.Info("Ultralight renderer created.");
 
