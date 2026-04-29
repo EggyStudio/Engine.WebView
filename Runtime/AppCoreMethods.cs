@@ -96,15 +96,31 @@ internal static class AppCoreMethods
                 [bz2Link, .. bz2Candidates]);
         }
 
-        // -- Pre-load Ultralight libraries (dependency order) --
-        loader.PreloadAll(
+        // -- Pre-load Ultralight libraries (dependency order) with RTLD_GLOBAL --
+        // libWebCore depends on symbols exported by libUltralightCore;
+        // libUltralight depends on libWebCore; libAppCore depends on libUltralight.
+        // NativeLibrary.TryLoad uses RTLD_LOCAL on Linux, which makes the chained
+        // dlopen() of libWebCore.so fail with unresolved-symbol errors. PreloadAllGlobal
+        // uses dlopen(..., RTLD_LAZY | RTLD_GLOBAL) so each library's exports are
+        // visible to the next one loaded.
+        loader.PreloadAllGlobal(
             NativeLibraryLoader.ToPlatformFileName("UltralightCore"),
             NativeLibraryLoader.ToPlatformFileName("WebCore"),
             NativeLibraryLoader.ToPlatformFileName("Ultralight"),
             NativeLibraryLoader.ToPlatformFileName("AppCore"));
 
-        // -- Register DllImport resolvers --
-        loader.RegisterDllImportResolver(typeof(ForkAppCore).Assembly);
+        // -- DllImport resolution --
+        // IMPORTANT: do NOT call RegisterDllImportResolver(typeof(ForkAppCore).Assembly).
+        // UltralightNet.Barebones merges UltralightNet.Methods and UltralightNet.AppCore.AppCoreMethods
+        // into a single assembly, and UltralightNet.Methods..cctor calls
+        // NativeLibrary.SetDllImportResolver itself during Preload(). Setting our own
+        // resolver first causes that call to throw InvalidOperationException
+        // ("A resolver is already set for the assembly").
+        // The native libraries we pre-loaded above are now cached in the dynamic
+        // linker by SONAME, so UltralightNet's own resolver (and any other
+        // [DllImport] in this process) will resolve them correctly.
+        // The global fallback handles the rare case where an assembly we don't
+        // know about needs one of these libs by short name.
         loader.RegisterGlobalFallback();
 
         _loader = loader;
