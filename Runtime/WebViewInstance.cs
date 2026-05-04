@@ -154,7 +154,7 @@ public sealed class WebViewInstance : IDisposable
             FontFamilyFixed = "Courier New",
             FontFamilySerif = "Times New Roman",
             FontFamilySansSerif = "Arial",
-            UserAgent = "Mozilla/5.0 (3DEngine WebView) UltralightNet/1.4",
+            UserAgent = "Mozilla/5.0 (Engine.WebView) UltralightNet/1.4",
         };
 
         _view = _renderer.CreateView(width, height, viewConfig, _renderer.DefaultSession);
