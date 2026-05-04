@@ -33,6 +33,10 @@ public sealed class WebViewPlugin : IPlugin
         var webview = new WebViewInstance();
         app.World.InsertResource(webview);
 
+        // Vulkan render-graph adapter for the webview. The plugin is a no-op when the
+        // graphics backend is not Vulkan, so it's safe to add unconditionally.
+        app.AddPlugin(new VulkanWebViewPlugin());
+
         // -- Debounce state for WebView native resize --
         bool pendingWebViewResize = false;
         uint pendingW = 0, pendingH = 0;
